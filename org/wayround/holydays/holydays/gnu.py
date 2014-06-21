@@ -15,10 +15,6 @@ def calculate_cal(y):
          },
         {'date': '1984-01-05T00:00:00Z',
          'msgid': 'GNU development started',
-         'options': ['no-anniversary']
-         },
-        {'date': '1984-01-05T00:00:00Z',
-         'msgid': 'GNU development started',
          'options': []
          },
         ]

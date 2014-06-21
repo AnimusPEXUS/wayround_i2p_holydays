@@ -163,21 +163,8 @@ class Holydays:
         return ret
 
     def years_past(self, dt, year, tzinfo):
-        res = datetime.datetime(
-            year=year,
-            month=dt.month,
-            day=dt.day,
-            tzinfo=tzinfo
-            ) - dt
-        # print("seconds: {}".format(res.seconds))
-        # print("days: {}".format(res.days))
-        return res.days / 31 / 12
-
-    #def _date_conv(self, x):
-    #    res = org.wayround.utils.datetime_iso8601.str_to_datetime(x['date'])
-    #    if res == None:
-    #        raise Exception("Can't parse date: {}".format(x['date']))
-    #    return res
+        res = year - dt.year
+        return res
 
 
 class Environment:
@@ -266,7 +253,7 @@ class Environment:
 
         year = 2014
         if 'year' in decoded_params:
-            lang = int(decoded_params['year'])
+            year = int(decoded_params['year'])
 
         prog_trans = gettext.translation(
             'holydays',
