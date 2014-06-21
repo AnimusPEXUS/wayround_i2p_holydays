@@ -1,0 +1,20 @@
+
+msgid ""
+msgstr ""
+"Project-Id-Version: org_wayround_holydays program texts\n"
+"PO-Revision-Date: 2014-06-21 14:18+0400\n"
+"Last-Translator: Alexey Gorshkov <animus@wayround.org>\n"
+"Language-Team: \n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+
+# "Content-Transfer-Encoding: 8bit\n"
+# "Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+
+msgid "anniversary"
+msgstr ""
+

@@ -1,0 +1,20 @@
+# main translation
+
+msgid ""
+msgstr ""
+"Project-Id-Version: org_wayround_holydays texts\n"
+"PO-Revision-Date: 2014-06-21 13:03+0400\n"
+"Last-Translator: Alexey Gorshkov <animus@wayround.org>\n"
+"Language-Team: \n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+
+# "Content-Transfer-Encoding: 8bit\n"
+# "Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+
+msgid "RMS announced GNU project on usenet"
+msgstr "RMS анонсировал проект GNU в юзенете"
