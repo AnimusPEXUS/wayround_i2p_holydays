@@ -1,0 +1,39 @@
+<%
+
+month_names1 = [
+    'january',
+    'february',
+    'march',
+    'april',
+    'may',
+    'june'
+    ]
+
+month_names2 = [
+    'july',
+    'august',
+    'september',
+    'october',
+    'november',
+    'december'
+    ]
+
+%><div class="cal-year-div-year-date-div">${ year_date | x }</div>
+<table class="cal-year-table">
+<tr>
+% for i in range(len(month_names1)):
+    <td class="cal-year-div-month-td">
+        <div class="cal-year-div-month-name-div">${ prog_trans.gettext(month_names1[i]) | x }</div>
+        <div class="cal-year-div-month-contents-div">${ year[i] }</div>
+    </td>
+% endfor
+</tr>
+<tr>
+% for i in range(len(month_names2)):
+    <td class="cal-year-div-month-td">
+        <div class="cal-year-div-month-name-div">${ prog_trans.gettext(month_names2[i]) | x }</div>
+        <div class="cal-year-div-month-contents-div">${ year[i+6] }</div>
+    </td>
+% endfor
+</tr>
+</table>

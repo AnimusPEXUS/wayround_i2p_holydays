@@ -1,16 +1,17 @@
 
-import copy
-import os
+import calendar
 import datetime
-import importlib
 import gettext
+import importlib
+import os
+import locale
 
 import bottle
 import mako.template
 
 import org.wayround.utils.bottle
-import org.wayround.utils.path
 import org.wayround.utils.datetime_iso8601
+import org.wayround.utils.path
 
 
 class Templates:
@@ -72,11 +73,11 @@ class Holydays:
                     'org.wayround.holydays.holydays.{}'.format(bn)
                     )
 
-                self._holy[bn] = mod.calculate_cal
+                self._holy[bn] = mod.calculate_dates
 
         return
 
-    def calculate_cal(self, y, lang='en', zoneinfo=None):
+    def calculate_dates(self, y, lang='en', zoneinfo=None):
 
         ret = []
 
@@ -84,12 +85,6 @@ class Holydays:
             zoneinfo = datetime.timezone(datetime.timedelta(hours=0))
 
         for i in sorted(list(self._holy.keys())):
-
-            prog_trans = gettext.translation(
-                'holydays',
-                localedir=self._env.prog_locale_dir,
-                languages=[lang]
-                )
 
             trans = gettext.translation(
                 i,
@@ -158,8 +153,7 @@ class Holydays:
         return ret
 
     def convert_to_pointed_year_date(self, dt, year):
-        ret = copy.copy(dt)
-        ret = ret.replace(year=year)
+        ret = dt.replace(year=year)
         return ret
 
     def years_past(self, dt, year, tzinfo):
@@ -185,6 +179,8 @@ class Environment:
 
         self.app.route('/index.html', 'GET', self.index)
         self.app.route('/main.html', 'GET', self.main)
+        self.app.route('/month.html', 'GET', self.month)
+        self.app.route('/year.html', 'GET', self.year)
 
         self.app.route('/css/<filename>', 'GET', self.css)
 
@@ -240,8 +236,28 @@ class Environment:
             )
 
     def index(self):
-        t = repr(self.holy.calculate_cal(2014))
-        return self.html_tpl(title='index', body=t)
+        prog_trans = gettext.translation(
+            'holydays',
+            localedir=self.prog_locale_dir,
+            languages=['en']
+            )
+
+        index = self.tpl.render(
+            'index',
+            prog_trans=prog_trans
+            )
+
+        return self.html_tpl(title='index', body=index, prog_trans=prog_trans)
+
+    def holyday_list(self, dates, prog_trans):
+
+        holyday_list = self.tpl.render(
+            'holyday_list',
+            dates=dates,
+            prog_trans=prog_trans
+            )
+
+        return holyday_list
 
     def main(self):
 
@@ -261,13 +277,9 @@ class Environment:
             languages=[lang]
             )
 
-        dates = self.holy.calculate_cal(year, lang)
+        dates = self.holy.calculate_dates(year, lang)
 
-        holyday_list = self.tpl.render(
-            'holyday_list',
-            dates=dates,
-            prog_trans=prog_trans
-            )
+        holyday_list = self.holyday_list(dates, prog_trans)
 
         main = self.tpl.render(
             'main',
@@ -276,5 +288,150 @@ class Environment:
             )
 
         html = self.html_tpl(title='index', body=main, prog_trans=prog_trans)
+
+        return html
+
+    def gen_cal_month(self, dates, year, month, lang='en'):
+
+        ret = []
+
+        cal = calendar.Calendar()
+        res = cal.monthdatescalendar(year, month)
+
+        for weeks in res:
+
+            week = []
+
+            for days in weeks:
+
+                found = []
+                for i in dates:
+                    if (i['date'].month == days.month
+                        and i['date'].day == days.day):
+
+                        found.append(i)
+
+                week.append(
+                    {
+                     'date': days,
+                     'dates': found
+                     }
+                    )
+
+            ret.append(week)
+
+        return ret
+
+    def gen_cal_month_html(self, dates, year, month, lang='en'):
+
+        res = self.gen_cal_month(dates, year, month, lang='en')
+
+        prog_trans = gettext.translation(
+            'holydays',
+            localedir=self.prog_locale_dir,
+            languages=[lang]
+            )
+
+        m = self.tpl.render('month', prog_trans=prog_trans, month=res)
+
+        return m
+
+    def month(self):
+
+        decoded_params = bottle.request.params.decode('utf-8')
+
+        cd = datetime.datetime.now()
+
+        lang = 'en'
+        if 'lang' in decoded_params:
+            lang = decoded_params['lang']
+
+        year = cd.year
+        if 'year' in decoded_params:
+            year = int(decoded_params['year'])
+
+        month = cd.month
+        if 'month' in decoded_params:
+            month = int(decoded_params['month'])
+
+        add_hl = False
+        if ('list' in decoded_params
+            and decoded_params['list'] in ['1', 'on', 'yes']):
+            add_hl = True
+
+        dates = self.holy.calculate_dates(year, lang)
+
+        prog_trans = gettext.translation(
+            'holydays',
+            localedir=self.prog_locale_dir,
+            languages=[lang]
+            )
+
+        m = self.gen_cal_month_html(dates, year, month, lang)
+
+        hl_t = ''
+        if add_hl:
+            dd = []
+            for i in dates:
+                if i['date'].month == month:
+                    dd.append(i)
+
+            hl_t = self.holyday_list(dd, prog_trans)
+
+        html = self.html_tpl(
+            'one month calendar',
+            body=m + hl_t,
+            prog_trans=prog_trans
+            )
+
+        return html
+
+    def year(self):
+
+        decoded_params = bottle.request.params.decode('utf-8')
+
+        cd = datetime.datetime.now()
+
+        lang = 'en'
+        if 'lang' in decoded_params:
+            lang = decoded_params['lang']
+
+        year = cd.year
+        if 'year' in decoded_params:
+            year = int(decoded_params['year'])
+
+        add_hl = False
+        if ('list' in decoded_params
+            and decoded_params['list'] in ['1', 'on', 'yes']):
+            add_hl = True
+
+        dates = self.holy.calculate_dates(year, lang)
+
+        year_lst = []
+        for i in range(1, 13):
+            year_lst.append(self.gen_cal_month_html(dates, year, i, lang))
+
+        prog_trans = gettext.translation(
+            'holydays',
+            localedir=self.prog_locale_dir,
+            languages=[lang]
+            )
+
+        y = self.tpl.render(
+            'year',
+            prog_trans=prog_trans,
+            year=year_lst,
+            year_date=year
+            )
+
+        hl_t = ''
+        if add_hl:
+            hl_t = self.holyday_list(dates, prog_trans)
+
+        html = self.html_tpl(
+            'one month calendar',
+            body=y + hl_t,
+            prog_trans=prog_trans
+            )
 
         return html

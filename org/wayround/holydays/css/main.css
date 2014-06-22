@@ -26,3 +26,7 @@ body {
     color: orange;
     font-weight: bold;
 }
+
+.cal-year-table {
+    border-spacing: 20px;
+}

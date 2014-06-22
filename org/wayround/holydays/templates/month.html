@@ -1,0 +1,21 @@
+<table>
+<tr>
+    % for i in ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su']:
+    <th>${ prog_trans.gettext(i) | x }</th>
+    % endfor
+</tr>
+% for week in month:
+<tr>
+    % for day in week:
+    <td>
+        % if dat != None:
+            ${ day['date'].day | x }
+            % if len(day['dates']) != 0:
+            (${ len(day['dates']) | x })
+            % endif
+        % endif
+    </td>
+    % endfor
+</tr>
+% endfor
+</table>

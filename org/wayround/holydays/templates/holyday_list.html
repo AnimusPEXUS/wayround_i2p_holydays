@@ -2,7 +2,7 @@
 % for i in dates:
     <tr>
         <td class="holyday-list-table-this-yead-date">
-            ${ i['date'] | x}
+            ${ '{:02}-{:02}'.format(i['date'].month, i['date'].day) | x}
         </td>
         <td rowspan="2" class="holyday-list-table-description">
             ${ i['msgstr'] | x}

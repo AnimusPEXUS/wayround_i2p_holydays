@@ -1,6 +1,6 @@
 
 
-def calculate_cal(y):
+def calculate_dates(y):
 
     return [
         {'date': '1983-09-27T09:35:59+04:00',
