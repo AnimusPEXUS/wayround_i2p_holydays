@@ -4,7 +4,6 @@ import datetime
 import gettext
 import importlib
 import os
-import locale
 
 import bottle
 import mako.template
@@ -81,7 +80,7 @@ class Holydays:
 
         ret = []
 
-        if zoneinfo == None:
+        if zoneinfo is None:
             zoneinfo = datetime.timezone(datetime.timedelta(hours=0))
 
         for i in sorted(list(self._holy.keys())):
@@ -94,16 +93,16 @@ class Holydays:
 
             for j in self._holy[i](y):
 
-                if not 'options' in j:
+                if 'options' not in j:
                     j['options'] = []
 
-                if not 'fargs' in j:
+                if 'fargs' not in j:
                     j['fargs'] = tuple()
 
-                if not 'fkwargs' in j:
+                if 'fkwargs' not in j:
                     j['fkwargs'] = dict()
 
-                if not 'msgid' in j:
+                if 'msgid' not in j:
                     j['msgid'] = 'no msgid'
 
                 res_date, attrs = \
@@ -111,7 +110,7 @@ class Holydays:
                         j['date']
                         )
 
-                if res_date == None:
+                if res_date is None:
                     raise Exception(
                         "Can't parse date: {} in module `{}'".format(
                             j['date'],
@@ -125,7 +124,7 @@ class Holydays:
 
                 anniversary = None
 
-                if not 'no-anniversary' in j['options']:
+                if 'no-anniversary' not in j['options']:
 
                     yp = int(self.years_past(j['date'], y, zoneinfo))
                     # print("yp: {}".format(yp))
@@ -139,11 +138,11 @@ class Holydays:
                     {'date': d,
                      'original_date': j['date'],
                      'msgstr': trans.gettext(
-                        j['msgid'].format(
-                            *j['fargs'],
-                            **j['fkwargs']
-                            )
-                        ),
+                         j['msgid'].format(
+                             *j['fargs'],
+                             **j['fkwargs']
+                             )
+                         ),
                      'anniversary': anniversary
                      }
                     )
@@ -164,10 +163,10 @@ class Holydays:
 class Environment:
 
     def __init__(
-        self,
-        host='localhost',
-        port=8080
-        ):
+            self,
+            host='localhost',
+            port=8080
+            ):
 
         self.host = host
         self.port = port
@@ -307,15 +306,15 @@ class Environment:
                 found = []
                 for i in dates:
                     if (i['date'].month == days.month
-                        and i['date'].day == days.day):
+                            and i['date'].day == days.day):
 
                         found.append(i)
 
                 week.append(
                     {
-                     'date': days,
-                     'dates': found
-                     }
+                        'date': days,
+                        'dates': found
+                        }
                     )
 
             ret.append(week)
@@ -356,7 +355,7 @@ class Environment:
 
         add_hl = False
         if ('list' in decoded_params
-            and decoded_params['list'] in ['1', 'on', 'yes']):
+                and decoded_params['list'] in ['1', 'on', 'yes']):
             add_hl = True
 
         dates = self.holy.calculate_dates(year, lang)
@@ -402,7 +401,7 @@ class Environment:
 
         add_hl = False
         if ('list' in decoded_params
-            and decoded_params['list'] in ['1', 'on', 'yes']):
+                and decoded_params['list'] in ['1', 'on', 'yes']):
             add_hl = True
 
         dates = self.holy.calculate_dates(year, lang)
