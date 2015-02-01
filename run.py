@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 
-import org.wayround.holydays.env
+import wayround_org.holydays.env
 
 
 if __name__ == '__main__':
-    e = org.wayround.holydays.env.Environment(
+    e = wayround_org.holydays.env.Environment(
         host='localhost',
         port=8085
         )
